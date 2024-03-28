@@ -209,7 +209,7 @@ services:
       - "--retention.resolution-raw=30d"
       - "--retention.resolution-5m=120d"
       - "--retention.resolution-1h=1y"
-      - "--block-sync-concurrency=20"
+      #- "--block-sync-concurrency=20"
       - "--compact.concurrency=1"
       - "--delete-delay=15m"
       - "--wait"
@@ -261,57 +261,57 @@ services:
     ports:
       - '10912:10902'
 
-  # alertmanager:
-  #   image: prom/alertmanager:v0.21.0
-  #   container_name: alertmanager
-  #   user: root
-  #   volumes:
-  #     - ./prometheus:/etc/config/
-  #     - ./data/prometheus/alertmanager:/data
-  #   command:
-  #     - '--config.file=/etc/config/alertmanager.yml'
-  #   restart: unless-stopped
-  #   expose:
-  #     - 9093
-  #   ports:
-  #     - "9093:9093"
+  alertmanager:
+     image: prom/alertmanager:v0.21.0
+     container_name: alertmanager
+     user: root
+     volumes:
+       - ./prometheus:/etc/config/
+       - ./data/prometheus/alertmanager:/data
+     command:
+       - '--config.file=/etc/config/alertmanager.yml'
+     restart: unless-stopped
+     expose:
+       - 9093
+     ports:
+       - "9093:9093"
 
-  # thanos_rule:
-  #   build:
-  #     context: ./thanos
-  #     dockerfile: Dockerfile.thanos
-  #   container_name: thanos_rule
-  #   volumes:
-  #     - ./data/rule:/data
-  #     - ./thanos/rule:/etc/config/
-  #   command:
-  #     - "/wait-for-it.sh"
-  #     - "minio:9000"
-  #     - "--"
-  #     - "/thanos"
-  #     - "rule"
-  #     - "--log.level=debug"
-  #     - |
-  #       --objstore.config=type: S3
-  #       config: 
-  #           bucket: thanos-data-bucket
-  #           access_key: myaccesskey
-  #           secret_key: mysecretkey
-  #           endpoint: minio:9000
-  #           insecure: true
-  #     - "--data-dir=/data"
-  #     - "--log.format=logfmt"
-  #     - "--rule-file=/etc/config/rules.yml"
-  #     - "--alert.query-url=http://localhost:10902"
-  #     - "--alertmanagers.url=http://alertmanager:9093"
-  #     - "--query=thanos_querier:10902"
-  #   expose:
-  #     - 10902
-  #     - 10901
-  #   depends_on:
-  #     - minio
-  #   ports:
-  #     - '10932:10902'
+  thanos_rule:
+    build:
+       context: ./thanos
+       dockerfile: Dockerfile.thanos
+    container_name: thanos_rule
+    volumes:
+       - ./data/rule:/data
+       - ./thanos/rule:/etc/config/
+    command:
+       - "/wait-for-it.sh"
+       - "minio:9000"
+       - "--"
+       - "/thanos"
+       - "rule"
+       - "--log.level=debug"
+       - |
+         --objstore.config=type: S3
+         config: 
+             bucket: thanos-data-bucket
+             access_key: myaccesskey
+             secret_key: mysecretkey
+             endpoint: minio:9000
+             insecure: true
+       - "--data-dir=/data"
+       - "--log.format=logfmt"
+       - "--rule-file=/etc/config/rules.yml"
+       - "--alert.query-url=http://localhost:10902"
+       - "--alertmanagers.url=http://alertmanager:9093"
+       - "--query=thanos_querier:10902"
+    expose:
+       - 10902
+       - 10901
+    depends_on:
+       - minio
+    ports:
+       - '10932:10902'
 
   grafana:
      image: grafana/grafana:7.4.5
@@ -328,7 +328,7 @@ services:
      ports:
        - "3000:3000"
 
-   bucket_web:
+  bucket_web:
      build:
        context: ./thanos
        dockerfile: Dockerfile.thanos
