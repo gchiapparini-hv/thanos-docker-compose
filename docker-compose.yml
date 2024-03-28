@@ -144,7 +144,7 @@ services:
       - "--store=thanos_sidecar_one:10901"
       - "--store=thanos_sidecar_two:10901"
       - "--store=thanos_store:10901"
-      # - "--store=thanos_rule:10901"
+      - "--store=thanos_rule:10901"
       - "--store.sd-interval=5m"
       - "--query.replica-label=monitor"
     expose:
@@ -261,20 +261,20 @@ services:
     ports:
       - '10912:10902'
 
-  alertmanager:
-     image: prom/alertmanager:v0.21.0
-     container_name: alertmanager
-     user: root
-     volumes:
-       - ./prometheus:/etc/config/
-       - ./data/prometheus/alertmanager:/data
-     command:
-       - '--config.file=/etc/config/alertmanager.yml'
-     restart: unless-stopped
-     expose:
-       - 9093
-     ports:
-       - "9093:9093"
+#  alertmanager:
+#     image: prom/alertmanager:v0.21.0
+#     container_name: alertmanager
+#     user: root
+#     volumes:
+#       - ./prometheus:/etc/config/
+#       - ./data/prometheus/alertmanager:/data
+#     command:
+#       - '--config.file=/etc/config/alertmanager.yml'
+#     restart: unless-stopped
+#     expose:
+#       - 9093
+#     ports:
+#       - "9093:9093"
 
   thanos_rule:
     build:
